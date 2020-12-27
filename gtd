@@ -1,0 +1,50 @@
+#!/bin/sh
+
+STUDY_MINUTES=25
+BREAK_MINUTES=5
+
+while getopts "hs:b:" opt; do
+    case "$opt" in
+        h)
+            print_help
+            exit 0
+            ;;
+        s)
+            STUDY_MINUTES=$OPTARG
+            ;;
+        b)
+            BREAK_MINUTES=$OPTARG
+            ;;
+    esac
+done
+
+print_break() {
+    figlet -c break -w $(tput cols)
+}
+
+print_study() {
+    figlet -c study -w $(tput cols)
+}
+
+countdown_study() {
+    clear
+    print_study
+    seconds=$(($STUDY_MINUTES*60)); date1=$((`date +%s` + $seconds)); 
+    while [ "$date1" -ge `date +%s` ]; do 
+        echo -ne "$(date -u --date @$(($date1 - `date +%s` )) +%H:%M:%S)\r"; 
+    done
+}
+
+countdown_break() {
+    clear
+    print_break
+    seconds=$(($STUDY_MINUTES*60)); date1=$((`date +%s` + $seconds));
+    while [ "$date1" -ge `date +%s` ]; do 
+        echo -ne "$(date -u --date @$(($date1 - `date +%s` )) +%H:%M:%S)\r"; 
+    done
+}
+
+while true; do
+    countdown_study
+    countdown_break
+done
